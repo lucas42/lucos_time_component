@@ -9,7 +9,7 @@ A web component for displaying the NTP-synced time on lucos apps
 ## Usage
 Include the following in your javascript:
 ```
-import 'lucos-time-component';
+import 'lucos_time_component';
 ```
 
 Include the following in your html:

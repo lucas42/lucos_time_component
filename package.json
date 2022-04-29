@@ -1,6 +1,6 @@
 {
   "name": "lucos_time_component",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A web component for displaying the time on lucos apps",
   "type": "module",
   "main": "index.js",
@@ -17,7 +17,6 @@
     "time"
   ],
   "author": "Luke Blaney",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/lucas42/lucos_time_component/issues"
   },
