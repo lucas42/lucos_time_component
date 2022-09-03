@@ -1,6 +1,8 @@
 import * as pubsub from 'lucos_pubsub';
 import getTime from './time.js';
 
+const leadingZero = (num) => num.toString().padStart(2, '0');
+
 class LucosTimeElement extends HTMLElement {
 	constructor() {
 		super();
@@ -12,12 +14,6 @@ class LucosTimeElement extends HTMLElement {
 		let timeNode_timeout;
 		function updateNavBarTime(force) {
 			if (timeNode_timeout) clearTimeout(timeNode_timeout);
-			function leadingZero(num) {
-				num += '';
-				if (num.length == 1) return '0'+num;
-				if (num.length > 1) return num;
-				return '0';
-			}
 			const date = new Date(getTime(force));
 			timeNode.firstChild.nodeValue = leadingZero(date.getHours()) + ':' + leadingZero(date.getMinutes()) + ':' + leadingZero(date.getSeconds());
 			timeNode_timeout=setTimeout(updateNavBarTime, 1000-date.getMilliseconds());
