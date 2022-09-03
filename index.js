@@ -1,5 +1,4 @@
-import * as pubsub from 'lucos_pubsub';
-import getTime from './time.js';
+import {getTime, getNewOffset} from './time.js';
 
 const leadingZero = (num) => num.toString().padStart(2, '0');
 
@@ -12,22 +11,22 @@ class LucosTimeElement extends HTMLElement {
 		timeNode.appendChild(document.createTextNode(''));
 		timeNode.id = 'lucos_navbar_time';
 		let timeNode_timeout;
-		function updateNavBarTime(force) {
+		function updateNavBarTime() {
 			if (timeNode_timeout) clearTimeout(timeNode_timeout);
-			const date = new Date(getTime(force));
+			const date = new Date(getTime());
 			timeNode.firstChild.nodeValue = leadingZero(date.getHours()) + ':' + leadingZero(date.getMinutes()) + ':' + leadingZero(date.getSeconds());
-			timeNode_timeout=setTimeout(updateNavBarTime, 1000-date.getMilliseconds());
+			timeNode_timeout = setTimeout(updateNavBarTime, 1000-date.getMilliseconds());
 		}
 		updateNavBarTime();
-		timeNode.addEventListener('click', function _timenodecolour() {
-			timeNode.classList.add("updating");
+
+		// Clicking the node triggers a new offset to be calculated
+		timeNode.addEventListener('click', async function _timenodecolour() {
 			timeNode.style.color = "red";
-			updateNavBarTime(true);
-		}, false);
-		pubsub.listen('offsetupdate', function _timenodecolourend(offset) {
-			if (offset.fresh) timeNode.classList.remove("updating");
+			updateNavBarTime();
+			await getNewOffset();
 			timeNode.style.color = "";
-		});
+			updateNavBarTime();
+		}, false);
 		shadow.appendChild(timeNode);
 	}
 }

@@ -1,6 +1,6 @@
 {
   "name": "lucos_time_component",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A web component for displaying the time on lucos apps",
   "type": "module",
   "main": "index.js",
@@ -21,9 +21,6 @@
     "url": "https://github.com/lucas42/lucos_time_component/issues"
   },
   "homepage": "https://github.com/lucas42/lucos_time_component#readme",
-  "dependencies": {
-    "lucos_pubsub": "^1.0.0"
-  },
   "devDependencies": {
     "webpack-cli": "^4.9.2"
   }

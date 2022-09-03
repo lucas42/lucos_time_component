@@ -3,8 +3,6 @@
  * Theory around synchronising time in distrubuted systems: https://www.inf.ed.ac.uk/teaching/courses/ds/handouts/part3.pdf
  **/
 
-import * as pubsub from 'lucos_pubsub';
-
 /**
  * Returns the current unix timestamp, as according to the local client
  * 
@@ -51,17 +49,16 @@ const calculateOffset = async () => new Promise((resolve, reject) => {
 /**
  * Does multiple HTTP requests to the server to calculate offsets between client and server time
  * Choose the value which had the lowest delay
- * 
- * The new value is stored in localStorage and triggers a pubsub event so components can access it.
+ * The new value is stored in localStorage, so future calls to `getTime` will use it
  * Note: This function has some basic debouncing logic to avoid mulitple simultaneous requests.
  **/
-async function getNewOffset() {
+export async function getNewOffset() {
 	let offset, delay;
-	const fetching = localStorage.getItem('lucos_fetchingNTP');
+	const fetching = localStorage.getItem('lucos_time_component-fetching');
 	
 	// If a fetch has been started in the last minute, then don't bother
 	if (fetching && fetching > clientTime()-(60*1000)) return;
-	localStorage.setItem('lucos_fetchingNTP', clientTime());
+	localStorage.setItem('lucos_time_component-fetching', clientTime());
 
 	// Try eight times to get the most accurate value
 	for (let ii = 0; ii < 8; ii++) {
@@ -72,11 +69,8 @@ async function getNewOffset() {
 	}
 						
 	// Save in local storage (savedAt uses client time for consistency)
-	localStorage.setItem('lucos_NTPOffset', JSON.stringify({offset, savedAt: clientTime()}));
-	localStorage.removeItem('lucos_fetchingNTP');
-
-	// Trigger event to let components know of update
-	pubsub.send('offsetupdate', {offset, fresh: true});
+	localStorage.setItem('lucos_time_component-offset', JSON.stringify({offset, savedAt: clientTime()}));
+	localStorage.removeItem('lucos_time_component-fetching');
 }
 
 /**
@@ -84,11 +78,10 @@ async function getNewOffset() {
  * Uses the client's current time, adjusted by a known offset with server time (where available)
  * If the offset hasn't been calculated in a while, triggers an asynchronous recalculation
  * 
- * @param {boolean} force - Recalculates the offset asynchronously, even where the curret one isn't too old.
  * @returns {number} A unix timestamp
  **/
-export default function getTime(force) {
-	const rawSavedOffset = localStorage.getItem('lucos_NTPOffset');
+export function getTime() {
+	const rawSavedOffset = localStorage.getItem('lucos_time_component-offset');
 	
 	// If the offset isn't saved, then request an update and just use client time.
 	if (!rawSavedOffset) {
@@ -97,10 +90,8 @@ export default function getTime(force) {
 	}
 	const savedOffset = JSON.parse(rawSavedOffset);
 	
-	// If the force param is set, then request new offset
-	if (force) getNewOffset();
-	// Also, if the offset hasn't been updated in over an hour, request an update
-	else if (savedOffset.savedAt > clientTime() + (60 * 60 * 1000)) getNewOffset();
+	// If the offset hasn't been updated in over an hour, request an update
+	if (savedOffset.savedAt > clientTime() + (60 * 60 * 1000)) getNewOffset();
 	return clientTime() + savedOffset.offset;
 }
 
