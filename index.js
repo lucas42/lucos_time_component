@@ -31,3 +31,5 @@ class LucosTimeElement extends HTMLElement {
 	}
 }
 customElements.define('lucos-time', LucosTimeElement);
+
+export { getTime }
