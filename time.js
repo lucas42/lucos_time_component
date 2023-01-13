@@ -18,7 +18,7 @@ function clientTime() {
  * 
  * @returns {Object} An object with the properties offset and delay
  **/
-const calculateOffset = async () => new Promise((resolve, reject) => {
+const calculateIndividualOffset = async () => new Promise((resolve, reject) => {
 	let t0, t1, t2, t3;
 	const req = new XMLHttpRequest();
 	req.addEventListener('readystatechange', event => {
@@ -52,7 +52,7 @@ const calculateOffset = async () => new Promise((resolve, reject) => {
  * The new value is stored in localStorage, so future calls to `getTime` will use it
  * Note: This function has some basic debouncing logic to avoid mulitple simultaneous requests.
  **/
-export async function getNewOffset() {
+export async function calculateOffset() {
 	let offset, delay;
 	const fetching = localStorage.getItem('lucos_time_component-fetching');
 	
@@ -62,7 +62,7 @@ export async function getNewOffset() {
 
 	// Try eight times to get the most accurate value
 	for (let ii = 0; ii < 8; ii++) {
-		const output = await calculateOffset();
+		const output = await calculateIndividualOffset();
 		if (typeof delay === "undefined" || output.delay < delay) { // Replace existing offset if there is a more accurate one
 			({offset, delay} = output);
 		}
@@ -77,21 +77,31 @@ export async function getNewOffset() {
  * Returns the current unix timestamp
  * Uses the client's current time, adjusted by a known offset with server time (where available)
  * If the offset hasn't been calculated in a while, triggers an asynchronous recalculation
- * 
+ *
  * @returns {number} A unix timestamp
  **/
-export function getTime() {
+function getTimestamp() {
 	const rawSavedOffset = localStorage.getItem('lucos_time_component-offset');
 	
 	// If the offset isn't saved, then request an update and just use client time.
 	if (!rawSavedOffset) {
-		getNewOffset();
+		calculateOffset();
 		return clientTime();
 	}
 	const savedOffset = JSON.parse(rawSavedOffset);
 	
 	// If the offset hasn't been updated in over an hour, request an update
-	if (savedOffset.savedAt > clientTime() + (60 * 60 * 1000)) getNewOffset();
+	if (savedOffset.savedAt > clientTime() + (60 * 60 * 1000)) calculateOffset();
 	return clientTime() + savedOffset.offset;
 }
 
+/**
+ * Returns the current date and time
+ * Uses the client's current time, adjusted by a known offset with server time (where available)
+ * If the offset hasn't been calculated in a while, triggers an asynchronous recalculation
+ *
+ * @returns {Date} The current date and time in a native javascript Date object
+ **/
+export function getDatetime() {
+	return new Date(getTimestamp());
+}
