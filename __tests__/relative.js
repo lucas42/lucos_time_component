@@ -16,6 +16,11 @@ describe('Dates', () => {
 		const actual = relativeDate(oneminago);
 		expect(actual).toEqual("1 minute ago");
 	});
+	it('should return singular for one and a bit min', () => {
+		const oneminago = new Date() - (72 * 1000);
+		const actual = relativeDate(oneminago);
+		expect(actual).toEqual("1 minute ago");
+	});
 	it('should return mins for less than an hour', () => {
 		const sixteenminsago = new Date() - (16 * 60 * 1000);
 		const actual = relativeDate(sixteenminsago);
@@ -26,6 +31,11 @@ describe('Dates', () => {
 		const actual = relativeDate(onehourago);
 		expect(actual).toEqual("1 hour ago");
 	});
+	it('should return singular for one and a bit hour', () => {
+		const onehourago = new Date() - (61 * 60 * 1000);
+		const actual = relativeDate(onehourago);
+		expect(actual).toEqual("1 hour ago");
+	});
 	it('should return hours for less than a day', () => {
 		const seventeenhoursago = new Date() - (17 * 60 * 60 * 1000);
 		const actual = relativeDate(seventeenhoursago);
@@ -33,6 +43,11 @@ describe('Dates', () => {
 	});
 	it('should return singular for one day', () => {
 		const onedayago = new Date() - (24 * 60 * 60 * 1000);
+		const actual = relativeDate(onedayago);
+		expect(actual).toEqual("1 day ago");
+	});
+	it('should return singular for one and a bit day', () => {
+		const onedayago = new Date() - (30 * 60 * 60 * 1000);
 		const actual = relativeDate(onedayago);
 		expect(actual).toEqual("1 day ago");
 	});

@@ -13,13 +13,13 @@ export function relativeDate(dateToCompare, overrideNow=null) {
 	const diffsec = Math.round(diffmillisec / 1000);
 	if (diffsec < 3) return "Just now";
 	if (diffsec < 60) return diffsec + " seconds ago";
-	if (diffsec == 60) return "1 minute ago";
 	const diffmins = Math.round(diffsec / 60);
+	if (diffmins === 1) return "1 minute ago";
 	if (diffmins < 60) return diffmins + " minutes ago";
-	if (diffmins == 60) return "1 hour ago";
 	const diffhours = Math.round(diffmins / 60);
+	if (diffhours === 1) return "1 hour ago";
 	if (diffhours < 24) return diffhours + " hours ago";
-	if (diffhours == 24) return "1 day ago";
 	const diffdays = Math.round(diffhours / 24);
+	if (diffdays === 1) return "1 day ago";
 	return diffdays + " days ago";
 }
