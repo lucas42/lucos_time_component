@@ -29,3 +29,9 @@ Run:
 ```
 npm test
 ```
+
+
+## Publish to npm
+Make sure to bump the version number in package.json.
+
+Then run `npm publish` (assuming you're already logged in)
