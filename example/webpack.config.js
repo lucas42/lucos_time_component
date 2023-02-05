@@ -1,7 +1,7 @@
 import { URL } from 'url';
 export default {
   entry: {
-    example: './index.js',
+    example: './example/example.js',
   },
   output: {
     filename: 'built.js',
