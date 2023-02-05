@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
     "example": "webpack -c example/webpack.config.js && open example/index.html"
   },
   "repository": {
@@ -22,6 +22,13 @@
   },
   "homepage": "https://github.com/lucas42/lucos_time_component#readme",
   "devDependencies": {
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "^4.9.2",
+    "jest": "^29.3.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

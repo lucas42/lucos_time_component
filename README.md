@@ -24,5 +24,8 @@ npm run example
 ```
 This uses webpack to build the javascript and then opens a html page which includes the web component
 
-## Automated Testing
-Not yet available
+## Unit Testing
+Run:
+```
+npm test
+```

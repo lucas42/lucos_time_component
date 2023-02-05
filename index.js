@@ -1,5 +1,5 @@
-import {getDatetime} from './time.js';
-
+import { getDatetime } from './time.js';
 import './webComponent.js';
+import { relativeDate } from './relative.js';
 
-export { getDatetime }
+export { getDatetime, relativeDate }

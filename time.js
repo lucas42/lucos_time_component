@@ -4,11 +4,11 @@
  **/
 
 /**
- * Returns the current unix timestamp, as according to the local client
+ * Returns the current unix timestamp, as according to the local system time
  * 
  * @returns {number} A unix timestamp
  **/
-function clientTime() {
+function localTime() {
 	return new Date().getTime();
 }
 
@@ -24,10 +24,10 @@ const calculateIndividualOffset = async () => new Promise((resolve, reject) => {
 	req.addEventListener('readystatechange', event => {
 		switch (req.readyState) {
 			case 1: // opened
-				t3 = clientTime();
+				t3 = localTime();
 				break;
 			case 2: // headers received
-				t0 = clientTime();
+				t0 = localTime();
 				break;
 			case 4: // done
 				t1 = t2 = parseInt(req.responseText); // Assume the server replied instantaneously
@@ -42,7 +42,7 @@ const calculateIndividualOffset = async () => new Promise((resolve, reject) => {
 		reject(event);
 	});
 
-	req.open('GET', "https://am.l42.eu/now?_cb="+clientTime(), true);
+	req.open('GET', "https://am.l42.eu/now?_cb="+localTime(), true);
 	req.send(null);
 });
 
@@ -57,8 +57,8 @@ export async function calculateOffset() {
 	const fetching = localStorage.getItem('lucos_time_component-fetching');
 	
 	// If a fetch has been started in the last minute, then don't bother
-	if (fetching && fetching > clientTime()-(60*1000)) return;
-	localStorage.setItem('lucos_time_component-fetching', clientTime());
+	if (fetching && fetching > localTime()-(60*1000)) return;
+	localStorage.setItem('lucos_time_component-fetching', localTime());
 
 	// Try eight times to get the most accurate value
 	for (let ii = 0; ii < 8; ii++) {
@@ -69,7 +69,7 @@ export async function calculateOffset() {
 	}
 						
 	// Save in local storage (savedAt uses client time for consistency)
-	localStorage.setItem('lucos_time_component-offset', JSON.stringify({offset, savedAt: clientTime()}));
+	localStorage.setItem('lucos_time_component-offset', JSON.stringify({offset, savedAt: localTime()}));
 	localStorage.removeItem('lucos_time_component-fetching');
 }
 
@@ -81,18 +81,22 @@ export async function calculateOffset() {
  * @returns {number} A unix timestamp
  **/
 function getTimestamp() {
+
+	// If localStorage isn't available, then it's likely we're running server side, so just trust the local time
+	if (typeof localStorage !== 'object') return localTime();
+
 	const rawSavedOffset = localStorage.getItem('lucos_time_component-offset');
 	
 	// If the offset isn't saved, then request an update and just use client time.
 	if (!rawSavedOffset) {
 		calculateOffset();
-		return clientTime();
+		return localTime();
 	}
 	const savedOffset = JSON.parse(rawSavedOffset);
 	
 	// If the offset hasn't been updated in over an hour, request an update
-	if (savedOffset.savedAt > clientTime() + (60 * 60 * 1000)) calculateOffset();
-	return clientTime() + savedOffset.offset;
+	if (savedOffset.savedAt > localTime() + (60 * 60 * 1000)) calculateOffset();
+	return localTime() + savedOffset.offset;
 }
 
 /**
