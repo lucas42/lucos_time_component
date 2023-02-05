@@ -24,5 +24,14 @@ npm run example
 ```
 This uses webpack to build the javascript and then opens a html page which includes the web component
 
-## Automated Testing
-Not yet available
+## Unit Testing
+Run:
+```
+npm test
+```
+
+
+## Publish to npm
+Make sure to bump the version number in package.json.
+
+Then run `npm publish` (assuming you're already logged in)
