@@ -12,21 +12,23 @@ export function initWebComponent() {
 			timeNode.appendChild(document.createTextNode(''));
 			timeNode.id = 'lucos_navbar_time';
 			let timeNode_timeout;
-			function updateNavBarTime() {
+			function updateTime() {
 				if (timeNode_timeout) clearTimeout(timeNode_timeout);
 				const date = getDatetime();
 				timeNode.firstChild.nodeValue = leadingZero(date.getHours()) + ':' + leadingZero(date.getMinutes()) + ':' + leadingZero(date.getSeconds());
-				timeNode_timeout = setTimeout(updateNavBarTime, 1000-date.getMilliseconds());
+				timeNode_timeout = setTimeout(updateTime, 1000-date.getMilliseconds());
+				const tickEvent = new CustomEvent('tick', { detail: date });
+				document.dispatchEvent(tickEvent);
 			}
-			updateNavBarTime();
+			updateTime();
 
 			// Clicking the node triggers a new offset to be calculated
 			timeNode.addEventListener('click', async function _timenodecolour() {
 				timeNode.style.color = "red";
-				updateNavBarTime();
+				updateTime();
 				await calculateOffset();
 				timeNode.style.color = "";
-				updateNavBarTime();
+				updateTime();
 			}, false);
 			shadow.appendChild(timeNode);
 		}
