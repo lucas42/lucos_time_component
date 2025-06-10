@@ -1,6 +1,6 @@
 {
   "name": "lucos_time_component",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "A web component for displaying the time on lucos apps",
   "type": "module",
   "main": "index.js",
