@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
-    "example": "webpack -c example/webpack.config.js && open example/index.html"
+    "example": "webpack -c example/webpack.config.js && open example/index.html",
+    "build": ""
   },
   "repository": {
     "type": "git",

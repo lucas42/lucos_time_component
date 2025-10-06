@@ -21,8 +21,11 @@ workflows:
   version: 2
   test-publish:
     jobs:
-      - test
-      - lucos/component-publish:
+      - test:
+          filters:
+            tags:
+              only: /^v.*/
+      - lucos/component-npm-publish:
           requires:
             - test
           filters:
