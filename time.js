@@ -47,12 +47,31 @@ const calculateIndividualOffset = async () => new Promise((resolve, reject) => {
 });
 
 /**
+ * Returns true if localStorage is available and functional in the current environment.
+ * Node < 25 has no localStorage at all; Node 25 without a web storage file path defines
+ * the object but getItem throws. This function handles both cases safely.
+ *
+ * @returns {boolean}
+ **/
+function isLocalStorageAvailable() {
+	try {
+		localStorage.getItem('lucos_time_component-test');
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/**
  * Does multiple HTTP requests to the server to calculate offsets between client and server time
  * Choose the value which had the lowest delay
  * The new value is stored in localStorage, so future calls to `getTime` will use it
  * Note: This function has some basic debouncing logic to avoid mulitple simultaneous requests.
  **/
 export async function calculateOffset() {
+	// XMLHttpRequest is not available in Node environments — nothing to do
+	if (typeof XMLHttpRequest === 'undefined') return;
+
 	let offset, delay;
 	const fetching = localStorage.getItem('lucos_time_component-fetching');
 	
@@ -82,8 +101,9 @@ export async function calculateOffset() {
  **/
 function getTimestamp() {
 
-	// If localStorage isn't available, then it's likely we're running server side, so just trust the local time
-	if (typeof localStorage !== 'object') return localTime();
+	// If localStorage isn't available or not functional, we're running server side, so just trust the local time.
+	// This covers Node < 25 (localStorage undefined) and Node 25 without a web storage file path configured.
+	if (!isLocalStorageAvailable()) return localTime();
 
 	const rawSavedOffset = localStorage.getItem('lucos_time_component-offset');
 	
