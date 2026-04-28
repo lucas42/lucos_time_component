@@ -115,7 +115,7 @@ function getTimestamp() {
 	const savedOffset = JSON.parse(rawSavedOffset);
 	
 	// If the offset hasn't been updated in over an hour, request an update
-	if (savedOffset.savedAt > localTime() + (60 * 60 * 1000)) calculateOffset();
+	if (localTime() > savedOffset.savedAt + (60 * 60 * 1000)) calculateOffset();
 	return localTime() + savedOffset.offset;
 }
 
