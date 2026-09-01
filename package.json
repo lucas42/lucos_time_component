@@ -28,7 +28,7 @@
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3",
-    "js-yaml": ">=5.3.0"
+    "js-yaml": ">=5.4.1"
   },
   "jest": {
     "testEnvironment": "node",
